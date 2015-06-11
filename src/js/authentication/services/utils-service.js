@@ -37,25 +37,6 @@ angular.module('app.modules.authentication.services')
           return domain;
         }
       };
-
-      this.clearCookie = function() {
-        // var domain = this.getDomain();
-        // if (domain === 'localhost') {
-        //   $.removeCookie(config.tokenName);
-        // } else {
-        //   $.removeCookie(config.tokenName, { domain: domain });
-        // }
-      };
-
-      this.setCookie = function(token, next) {
-        // var domain = this.getDomain();
-        // if (domain === 'localhost') {
-        //   $.cookie(config.tokenName, token);
-        // } else {
-        //   $.cookie(config.tokenName, token, { domain: domain });
-        // }
-        // return next();
-      };
     }
   ]
 );

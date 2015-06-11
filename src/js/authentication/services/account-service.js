@@ -8,6 +8,7 @@ angular.module('app.modules.authentication.services')
     '$auth',
     '$config',
     function($rootScope, $notification, $http, $state, $utils, $auth, $config) {
+      'use strict';
 
       var svc = {
 
