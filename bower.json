@@ -1,0 +1,30 @@
+{
+  "name": "angular-common",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mattgi/angular-common",
+  "authors": [
+    "Matt Ginty <matt.ginty@gmail.com>"
+  ],
+  "description": "reusable angular components for single page applications",
+  "main": "app.js",
+  "keywords": [
+    "angular",
+    "common"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "async": "~1.2.1",
+    "satellizer": "~0.11.1",
+    "bootbox": "~4.4.0",
+    "angular": "~1.4.0",
+    "angular-ui-router": "~0.2.15",
+    "lodash": "~3.9.3"
+  }
+}
