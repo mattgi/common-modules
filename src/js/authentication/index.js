@@ -33,7 +33,7 @@ angular.module('app.modules.authentication', [
   'satellizer.config',
   '$config',
   function($scope, $state, $account, $auth, $notification, sat, $config) {
-    sat.loginUrl = $config.uri.auth + '/signin';
+    sat.loginUrl = $config.uri.auth.signin;
 
     $scope.signin = function() {
       var model = { email: $scope.email, password: $scope.password, isAdmin: $state.current.data.auth.app === 'admin' };
@@ -64,14 +64,15 @@ angular.module('app.modules.authentication', [
 
     $scope.forgot = function() {
       var model = { email: $scope.email, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.post($config.uri.auth + '/forgot-password', model).then(function() {
+      $http.post($config.uri.auth.forgot, model).then(function() {
         $notification.success('Please check your email for further intructions.');
       }).catch($notification.error);
     };
 
     $scope.resetRequest = function() {
       var model = { email: $scope.email, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.get($config.uri.auth + '/reset-password/' + $state.params.emailToken + '/' + $state.params.resetToken).then(function(response) {
+      var uri = [ $config.uri.auth.reset, $state.params.emailToken, $state.params.resetToken ].join('/');
+      $http.get(url).then(function(response) {
         $scope.email = response.data.user.email;
       }).catch(function(err) {
         $notification.error(err);
@@ -81,7 +82,7 @@ angular.module('app.modules.authentication', [
 
     $scope.reset = function() {
       var model = { email: $scope.email, password: $scope.password, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.post($config.uri.auth + '/reset-password', model).then(function() {
+      $http.post($config.uri.auth.reset, model).then(function() {
         $auth.login(model).then(function() {
           $account.refresh(function() {
             $notification.success('Welcome back ' + $account.me.name + '. You have successfully reset your password.');
@@ -116,7 +117,7 @@ angular.module('app.modules.authentication', [
   'satellizer.config',
   '$notification',
   function($scope, $state, $auth, sat, $notification) {
-    sat.signupUrl = $config.uri.auth + '/signup';
+    sat.signupUrl = $config.uri.auth.signup;
     $scope.signup = function() {
       $auth.signup({
         displayName: $scope.displayName,
@@ -229,10 +230,10 @@ angular.module('app.modules.authentication', [
         if (auth && auth.redirectTo && auth.redirectIfAuthenticated) {
           // redirect to state data defined state
           return $rootScope.redirectState(angular.extend(options, { stateName: auth.redirectTo, refreshAccount: true }));
-        } else if (auth && auth.permissions && auth.permissions.length > 0) {
+        } else if (auth && auth.role && auth.role.length > 0) {
 
           if ($account.initialized) {
-            if (_.intersection($account.me.permissions, auth.permissions).length === 0) {
+            if ($account.me.role !== auth.role) {
               // redirect to forbidden (server handling)
               event.preventDefault();
               if ($state.get('forbidden')) {
@@ -243,7 +244,7 @@ angular.module('app.modules.authentication', [
             }
           } else {
             $account.refresh(function () {
-              if (_.intersection($account.me.permissions, auth.permissions).length === 0) {
+              if ($account.me.role !== auth.role) {
                 event.preventDefault();
                 if ($state.get('forbidden')) {
                   $state.go('forbidden');
@@ -255,7 +256,7 @@ angular.module('app.modules.authentication', [
           }
         }
         // else pass-through
-      } else if (auth && auth.permissions && auth.permissions.length === 0) {
+      } else if (auth && ((auth.role && auth.role.length === 0) || _.isUndefined(auth.role))) {
         // no permissions required for route, pass through.
       } else {
         // else redirect to signin.

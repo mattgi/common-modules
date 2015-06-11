@@ -19,9 +19,9 @@ angular.module('app.modules.authentication.services')
 
         url: $config.uri.api + '/me',
 
-        hasPermission: function(permission) {
-          if (svc.me && svc.me.permissions) {
-            return _.contains(svc.me.permissions, permission);
+        hasPermission: function(role) {
+          if (svc.me && svc.me.role) {
+            return (svc.me.role === role);
           }
 
           return false;

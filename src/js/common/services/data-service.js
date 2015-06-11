@@ -8,44 +8,8 @@ angular.module('app.modules.common.services').factory('$data', [
   '$config',
   function($rootScope, $log, $http, $notification, $applicationLoggingService, $socket, $config) {
     var svc = {
-      models: {
-        'blacklisted-emails': {
-          name: 'blacklistedEmail',
-          plural: 'blacklistedEmails',
-          url: '/blacklisted-emails',
-          initialized: false
-        },
-        'media': {
-          name: 'media',
-          plural: 'media',
-          url: '/media',
-          initialized: false
-        },
-        'users': {
-          name: 'user',
-          plural: 'users',
-          url: '/users',
-          initialized: false
-        },
-        'roles': {
-          name: 'role',
-          plural: 'roles',
-          url: '/roles',
-          initialized: false
-        },
-        'migrations': {
-          name: 'migration',
-          plural: 'migrations',
-          url: '/migrations',
-          initialized: false
-        },
-        'settings': {
-          name: 'settings',
-          plural: 'settings',
-          url: '/settings',
-          initialized: false
-        }
-      },
+
+      models: angular.copy($config.models),
 
       active: {
       },
@@ -55,7 +19,7 @@ angular.module('app.modules.common.services').factory('$data', [
 
       deactivate: function(modelName) {
         var meta = svc.models[modelName];
-        delete svc.active[meta.name];
+        delete svc.active[meta.singular];
       },
 
       activate: function(modelName, id, next, forceRefresh) {
@@ -65,16 +29,16 @@ angular.module('app.modules.common.services').factory('$data', [
         var data = svc.data[meta.plural];
 
         if (!forceRefresh) {
-          svc.active[meta.name] = _.findWhere(svc.data[meta.plural], { id: id });
+          svc.active[meta.singular] = _.findWhere(svc.data[meta.plural], { id: id });
           if (next) {
             next();
           }
         } else {
           svc.init(modelName, function(err, data) {
-            svc.active[meta.name] = _.findWhere(svc.data[meta.plural], { id: id });
-            if (angular.isUndefined(svc.active[meta.name])) {
+            svc.active[meta.singular] = _.findWhere(svc.data[meta.plural], { id: id });
+            if (angular.isUndefined(svc.active[meta.singular])) {
               if (next) {
-                return next([meta.name, id, ' could not be found.'].join(' '), data);
+                return next([meta.singular, id, ' could not be found.'].join(' '), data);
               }
             }
 
@@ -90,9 +54,10 @@ angular.module('app.modules.common.services').factory('$data', [
       // filter occurs after fetch
       init: function(modelName, options, next) {
         var meta = svc.models[modelName];
+        console.log(meta);
         options = options || {};
         svc.data[meta.plural] = [];
-        delete svc.active[meta.name];
+        delete svc.active[meta.singular];
 
         if (!next && _.isFunction(options)) {
           next = options;
@@ -110,7 +75,7 @@ angular.module('app.modules.common.services').factory('$data', [
       list: function(modelName, options, next) {
         options = options || {};
         var meta = svc.models[modelName];
-        var url = meta.url;
+        var url = meta.route;
         var request = { method: 'list', modelName: modelName };
         var q;
 
@@ -135,7 +100,10 @@ angular.module('app.modules.common.services').factory('$data', [
 
         if (q) url = [ url, q ].join('?');
 
-        $http({ method: 'GET', url: $config.uri.api + url })
+        url = $config.uri.api + url;
+        console.log(url);
+
+        $http({ method: 'GET', url: url })
           .success(function(data, status) {
             var pagination = {
               hasMore: data && data['has_more'] ? data['has_more'] : false,
@@ -234,7 +202,7 @@ angular.module('app.modules.common.services').factory('$data', [
 
       create: function(modelName, model, next) {
         var meta = svc.models[modelName];
-        var url = meta.url;
+        var url = meta.route;
         var request = { method: 'create', modelName: modelName, model: model };
 
         $http({ method: 'POST', url: $config.uri.api + url, data: model })
@@ -253,7 +221,7 @@ angular.module('app.modules.common.services').factory('$data', [
 
       save: function(modelName, model, next) {
         var meta = svc.models[modelName];
-        var url = meta.url + '/' + model.id;
+        var url = meta.route + '/' + model.id;
         var request = { method: 'save', modelName: modelName, model: model };
 
         $http({ method: 'PUT', url: $config.uri.api + url, data: model })
@@ -271,7 +239,7 @@ angular.module('app.modules.common.services').factory('$data', [
         var request = { method: 'destroy', modelName: modelName, id: id };
 
         var meta = svc.models[modelName];
-        var url = meta.url;
+        var url = meta.route;
 
         // Lets get cocky and delete it client side before the server responses.
         var item = _.findWhere(svc.data[meta.plural], { id: id });
@@ -279,7 +247,7 @@ angular.module('app.modules.common.services').factory('$data', [
         if (index > -1) {
           svc.data[meta.plural].splice(index, 1);
         }
-        if (svc.active[meta.name] && svc.active[meta.name].id === id) {
+        if (svc.active[meta.singular] && svc.active[meta.singular].id === id) {
           svc.deactivate(meta.plural);
         }
 
