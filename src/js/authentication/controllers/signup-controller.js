@@ -2,9 +2,10 @@ angular.module('app.modules.authentication.controllers').controller('SignupContr
   '$scope',
   '$state',
   '$auth',
+  '$config',
   'satellizer.config',
   '$notification',
-  function($scope, $state, $auth, sat, $notification) {
+  function($scope, $state, $auth, $config, sat, $notification) {
     'use strict';
 
     sat.signupUrl = $config.uri.auth.signup;

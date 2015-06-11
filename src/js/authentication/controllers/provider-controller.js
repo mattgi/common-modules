@@ -2,11 +2,16 @@ angular.module('app.modules.authentication.controllers').controller('ProviderCon
   '$scope',
   '$auth',
   'satellizer.config',
+  '$config',
   '$notification',
-  function($scope, $auth, sat, $notification) {
+  function($scope, $auth, sat, $config, $notification) {
     'use strict';
 
-    sat.facebook = { clientId: $config.facebook.clientId);
+    if ($config.facebook) {
+      sat.facebook({
+        clientId: $config.facebook.clientId
+      });
+    }
 
     $scope.link = function(provider, next) {
       $auth.link(provider).then(function() {
@@ -28,5 +33,6 @@ angular.module('app.modules.authentication.controllers').controller('ProviderCon
         return next(new Error(message));
       });
     };
+
   }
 ]);
