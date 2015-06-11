@@ -54,7 +54,6 @@ angular.module('app.modules.common.services').factory('$data', [
       // filter occurs after fetch
       init: function(modelName, options, next) {
         var meta = svc.models[modelName];
-        console.log(meta);
         options = options || {};
         svc.data[meta.plural] = [];
         delete svc.active[meta.singular];
@@ -101,8 +100,6 @@ angular.module('app.modules.common.services').factory('$data', [
         if (q) url = [ url, q ].join('?');
 
         url = $config.uri.api + url;
-        console.log(url);
-
         $http({ method: 'GET', url: url })
           .success(function(data, status) {
             var pagination = {
