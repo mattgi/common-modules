@@ -149,10 +149,10 @@ angular.module('app.modules.common.services').factory('$data', [
         id = svc.safeNumberOrString(id);
         var request = { method: 'fetch', modelName: modelName, id: id };
 
-        var url = svc.models[modelName].url;
-        var query = '/' + encodeURIComponent(id);
+        var url = svc.models[modelName].route;
+        var query = encodeURIComponent(id);
 
-        $http({ method: 'GET', url: $config.uri.api + url + query })
+        $http({ method: 'GET', url: [ $config.uri.api + url, query ].join('/') })
           .success(function(data, status) {
 
             if (data && data.itemCount === 0) {
