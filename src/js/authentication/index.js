@@ -4,6 +4,7 @@ angular.module('app.modules.authentication.directives', []);
 angular.module('app.modules.authentication', [
   'ui.router',
   'satellizer',
+  'app.services', // This currently relies on gulp task creating a config.js file
   'app.modules.common.services',
   'app.modules.alert',
   'app.modules.authentication.services',
@@ -11,7 +12,14 @@ angular.module('app.modules.authentication', [
   'app.modules.authentication.directives'
 ]).config([
   '$authProvider',
-  function($authProvider) {
+  '$configProvider',
+  function($authProvider, $configProvider) {
+    var $config = $configProvider.$get();
+
+    console.log($config);
+
+    configSatellizer($authProvider, $config.satellizer);
+
     $authProvider.tokenPrefix = 'auth';
   }
 ]).run([
@@ -127,3 +135,18 @@ angular.module('app.modules.authentication', [
     });
   }
 ]);
+
+/**
+ * Configure satillizer settings for available providers
+ * @param {object} $authProvider
+ * @param {object} $providers
+ */
+function configSatellizer($authProvider, $providers) {
+  if ($providers) {
+    for (var provider in $providers) {
+      if ($authProvider.hasOwnProperty(provider) && 'function' === typeof($authProvider[provider])) {
+        $authProvider[provider]($providers[provider]);
+      }
+    }
+  }
+}

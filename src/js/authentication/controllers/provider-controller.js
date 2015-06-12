@@ -7,12 +7,6 @@ angular.module('app.modules.authentication.controllers').controller('ProviderCon
   function($scope, $auth, sat, $config, $notification) {
     'use strict';
 
-    if ($config.facebook) {
-      sat.facebook({
-        clientId: $config.facebook.clientId
-      });
-    }
-
     $scope.link = function(provider, next) {
       $auth.link(provider).then(function() {
         $notification.success('You have successfully linked ' + provider + ' account');
