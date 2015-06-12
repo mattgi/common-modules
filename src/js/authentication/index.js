@@ -16,8 +16,6 @@ angular.module('app.modules.authentication', [
   function($authProvider, $configProvider) {
     var $config = $configProvider.$get();
 
-    console.log($config);
-
     configSatellizer($authProvider, $config.satellizer);
 
     $authProvider.tokenPrefix = 'auth';
