@@ -1,0 +1,12 @@
+<div>
+  <p>Select the columns that you would like to view:</p>
+  <form ng-submit="finalizeColumnSelection()" name="forms.editForm" role="form" validations="validations" novalidate="novalidate" class="popped">
+    <div ng-repeat="col in list.columns" ng-class="{ 'first-group': $first, 'last-group': $last }" class="form-group">
+      <input id="{{ col.name }}" type="checkbox" name="{{ col.name }}" ng-model="col.isVisible"/>
+      <label for="{{ col.name }}"><span>&nbsp;{{ col.displayName }}</span></label>
+    </div>
+    <div class="form-group form-actions blocked single-action">
+      <button type="submit" name="submit" ng-class="{ 'btn-disabled': forms.editForm.$invalid }" ng-disabled="forms.editForm.$invalid" class="btn btn-lg btn-primary">Update</button>
+    </div>
+  </form>
+</div>

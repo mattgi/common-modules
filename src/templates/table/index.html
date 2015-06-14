@@ -1,0 +1,70 @@
+<div ng-controller="ListController" class="container-fluid main-content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="list-head">
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="list-head-content">
+              <h5>{{ list.model }}</h5>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="list-head-content pull-right">
+              <button class="btn btn-default">Export</button>
+              <button ng-click="toggleFilters()" class="btn btn-gray">Filters</button>
+              <button ng-click="toggleColumns()" class="btn btn-gray">Column Selector</button><a ng-if="list.display.create" ng-click="createItem()" class="btn btn-primary">Add New</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row push-bottom-xs">
+    <div class="col-xs-12">
+      <div class="bordered-table">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-header admin-table-col-{{ col.name }}"><span>{{ col.displayName }}</span>
+                <button ng-show="col.isSortable" ng-click="sortColumn(col)" class="btn sort {{ col.sortDirection }}"></button>
+              </th>
+              <th ng-if="list.display.actions" class="admin-table-col-actions"><span>Actions</span></th>
+            </tr>
+          </thead>
+          <thead ng-show="list.display.filters" class="filter-head">
+            <tr>
+              <th ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-col-{{ col.name }}">
+                <input ng-if="col.isFilterable" name="filter-{{ col.name}}" ng-model="col.filter"/>
+              </th>
+              <th ng-if="list.display.actions" class="admin-table-col-actions"><span>&nbsp;</span></th>
+            </tr>
+          </thead>
+          <tbody ng-hide="list.total < 1">
+            <tr ng-repeat="item in data[list.model]">
+              <td ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-col-{{ col.name }}"><span>{{ format[col.formatter](item[col.name]) }}</span></td>
+              <td ng-if="list.display.actions" class="admin-table-col-actions">
+                <button ng-if="list.display.edit" ng-click="editItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></button>
+                <button ng-if="list.display.show" ng-click="showItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-link"></i></button>
+                <button ng-if="list.display.destroy" ng-click="deleteItem(item)" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div ng-show="list.total < 1" class="text-center"><br/>
+          <h6 ng-show="list.total === 0">No {{ list.model }} found.</h6>
+          <h6 ng-show="list.total < 0">Fetching {{ list.model }}.</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-hide="list.total < 1" class="row push-bottom-xs">
+    <div class="col-xs-3"><span class="paged-details">{{ pagedDetails() }}</span></div>
+    <div class="col-xs-6">
+      <div class="text-center">
+        <button ng-click="prevPage()" ng-class="{ disabled : list.pagination.currentPage < 2 }" ng-disabled="list.pagination.currentPage < 2" class="btn btn-sm btn-default"><i class="fa fa-caret-left"></i></button><span>&nbsp;&nbsp;{{ list.pagination.currentPage }} of {{ list.pagination.pageCount }}&nbsp;&nbsp;</span>
+        <button ng-click="nextPage()" ng-class="{ disabled : !list.hasMore }" ng-disabled="!list.hasMore" class="btn btn-sm btn-default"><i class="fa fa-caret-right"></i></button>
+      </div>
+    </div>
+    <div class="col-xs-3"><span>&nbsp;</span></div>
+  </div>
+</div>
