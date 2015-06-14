@@ -1,11 +1,11 @@
 {
-  "name": "angular-common",
-  "version": "0.0.0",
-  "homepage": "https://github.com/mattgi/angular-common",
+  "name": "common-modules",
+  "version": "0.1.0",
+  "homepage": "https://github.com/mattgi/common-modules",
   "authors": [
     "Matt Ginty <matt.ginty@gmail.com>"
   ],
-  "description": "reusable angular components for single page applications",
+  "description": "A collection of reusable angular components for single page applications",
   "main": "app.js",
   "keywords": [
     "angular",
