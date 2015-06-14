@@ -4,12 +4,8 @@ angular.module('app.modules.authentication.controllers').controller('SigninContr
   '$account',
   '$auth',
   '$notification',
-  'satellizer.config',
-  '$config',
-  function($scope, $state, $account, $auth, $notification, sat, $config) {
+  function($scope, $state, $account, $auth, $notification) {
     'use strict';
-
-    sat.loginUrl = $config.uri.auth.signin;
 
     $scope.signin = function() {
       var model = { email: $scope.email, password: $scope.password, isAdmin: $state.current.data.auth.app === 'admin' };

@@ -18,6 +18,8 @@ angular.module('app.modules.authentication', [
 
     configSatellizer($authProvider, $config.satellizer);
 
+    $authProvider.loginUrl = $config.uri.auth.signin;
+    $authProvider.signupUrl = $config.uri.auth.signup;
     $authProvider.tokenPrefix = 'auth';
   }
 ]).run([
