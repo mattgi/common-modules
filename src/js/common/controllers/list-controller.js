@@ -3,10 +3,10 @@ angular.module('app.modules.common.controllers').controller('ListController', [
   '$scope',
   '$state',
   '$notification',
-  '$modal',
+  '$pop',
   '$data',
   '$config',
-  function ($rootScope, $scope, $state, $notification, $modal, $data, $config) {
+  function ($rootScope, $scope, $state, $notification, $pop, $data, $config) {
 
     $scope.data = $data.data;
     $scope.editable = {};
@@ -36,7 +36,7 @@ angular.module('app.modules.common.controllers').controller('ListController', [
 
     $scope.toggleColumns = function() {
       var tmpl = '/templates/table/column-chooser.html';
-      $modal.dialog($scope.meta.route, null, null,  tmpl, $scope);
+      $pop.dialog($scope.meta.route, null, null,  tmpl, $scope);
     };
 
     $scope.pagedDetails = function() {
@@ -190,14 +190,14 @@ angular.module('app.modules.common.controllers').controller('ListController', [
     };
 
     $scope.finalizeColumnSelection = function() {
-      $modal.hideAll();
+      $pop.hideAll();
     };
 
     $scope.createItem = function() {
       if ($scope.list.display.create.isModal) {
         var name = $data.models[$scope.meta.route].singular;
         $scope.editable[name] = {};
-        $modal.dialog($scope.meta.route, null, null,  $scope.list.display.create.template, $scope);
+        $pop.dialog($scope.meta.route, null, null,  $scope.list.display.create.template, $scope);
       } else {
         $state.go($scope.list.display.create.state);
       }
@@ -206,7 +206,7 @@ angular.module('app.modules.common.controllers').controller('ListController', [
     $scope.finalizeCreateItem = function() {
       var name = $data.models[$scope.meta.route].singular;
       $data.create($scope.meta.route, $scope.editable[name], function() {
-        $modal.hideAll();
+        $pop.hideAll();
         $notification.success(name + ' successfully created.');
         delete $scope.editable[name];
       });
@@ -216,7 +216,7 @@ angular.module('app.modules.common.controllers').controller('ListController', [
       if ($scope.list.display.edit.isModal) {
         var name = $data.models[$scope.meta.route].singular;
         $scope.editable[name] = angular.copy(item);
-        $modal.dialog($scope.meta.route, null, null,  $scope.list.display.edit.template, $scope);
+        $pop.dialog($scope.meta.route, null, null,  $scope.list.display.edit.template, $scope);
       } else {
         $state.go($scope.list.display.edit.state, { id: item.id });
       }
@@ -232,7 +232,7 @@ angular.module('app.modules.common.controllers').controller('ListController', [
         if (err) {
           $notification.error(err);
         } else {
-          $modal.hideAll();
+          $pop.hideAll();
           $notification.success(name + ' successfully updated.');
           delete $scope.editable[name];
         }
