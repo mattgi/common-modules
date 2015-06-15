@@ -1,5 +1,5 @@
 angular.module('app.modules.modals.services')
-  .factory('$modal', [
+  .factory('$pop', [
     '$templateCache',
     '$compile',
     '$q',
