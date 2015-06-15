@@ -28,21 +28,21 @@
               <th ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-header admin-table-col-{{ col.name }}"><span>{{ col.displayName }}</span>
                 <button ng-show="col.isSortable" ng-click="sortColumn(col)" class="btn sort {{ col.sortDirection }}"></button>
               </th>
-              <th ng-if="list.display.actions" class="admin-table-col-actions"><span>Actions</span></th>
+              <th ng-if="list.toggles.actions" class="admin-table-col-actions"><span>Actions</span></th>
             </tr>
           </thead>
-          <thead ng-show="list.display.filters" class="filter-head">
+          <thead ng-show="list.toggles.filters" class="filter-head">
             <tr>
               <th ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-col-{{ col.name }}">
                 <input ng-if="col.isFilterable" name="filter-{{ col.name}}" ng-model="col.filter"/>
               </th>
-              <th ng-if="list.display.actions" class="admin-table-col-actions"><span>&nbsp;</span></th>
+              <th ng-if="list.toggles.actions" class="admin-table-col-actions"><span>&nbsp;</span></th>
             </tr>
           </thead>
           <tbody ng-hide="list.total < 1">
             <tr ng-repeat="item in data[list.model]">
               <td ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-col-{{ col.name }}"><span>{{ format[col.formatter](item[col.name]) }}</span></td>
-              <td ng-if="list.display.actions" class="admin-table-col-actions">
+              <td ng-if="list.toggles.actions" class="admin-table-col-actions">
                 <button ng-if="list.display.edit" ng-click="editItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></button>
                 <button ng-if="list.display.show" ng-click="showItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-link"></i></button>
                 <button ng-if="list.display.destroy" ng-click="deleteItem(item)" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i></button>

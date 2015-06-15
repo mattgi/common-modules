@@ -1,0 +1,9 @@
+<div>
+  <form ng-submit="finalizeDeleteItem()" name="forms.editForm" role="form" validations="validations" novalidate="novalidate" class="popped">
+    <p class="text-center">Are you sure that you wish to delete this item?</p>
+    <div class="form-group form-actions blocked">
+      <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-lg btn-default bootbox-close-button">Cancel</button>
+      <button type="submit" name="submit" ng-class="{ 'btn-disabled': forms.editForm.$invalid }" ng-disabled="forms.editForm.$invalid" class="btn btn-lg btn-danger">Yes, Delete</button>
+    </div>
+  </form>
+</div>

@@ -19,10 +19,12 @@ angular.module('app.modules.common.controllers').controller('ListController', [
         currentPage: 1,
         limit: 25,
       },
-      display: {
+      toggles: {
         filters: false,
         columns: false,
-        actions: true,
+        actions: false
+      },
+      display: {
         create: false,
         show: false,
         edit: true,
@@ -31,11 +33,11 @@ angular.module('app.modules.common.controllers').controller('ListController', [
     };
 
     $scope.toggleFilters = function() {
-      $scope.list.display.filters = !$scope.list.display.filters;
+      $scope.list.toggles.filters = !$scope.list.toggles.filters;
     };
 
     $scope.toggleColumns = function() {
-      var tmpl = '/templates/table/column-chooser.html';
+      var tmpl = '/templates/common/column-chooser.html';
       $pop.dialog($scope.meta.route, null, null,  tmpl, $scope);
     };
 
@@ -149,12 +151,17 @@ angular.module('app.modules.common.controllers').controller('ListController', [
 
       // any defaults based on route.
       $scope.list.model = $scope.meta.route;
-      var listConfig = $config.models[$scope.meta.route];
-      $scope.list.columns = listConfig.fields;
-      $scope.list.display = listConfig.display;
+      var listConfig = $config.models[$scope.meta.route] ? $config.models[$scope.meta.route].list : {};
+      if (listConfig.columns) $scope.list.columns = listConfig.columns;
+      if (listConfig.display) $scope.list.display = listConfig.display;
+
+      $scope.list.toggles.filters = false;
+      $scope.list.toggles.columns = false;
+      if ($scope.list.display.create || $scope.list.display.show || $scope.list.display.edit || $scope.list.display.destroy) {
+        $scope.list.toggles.actions = true;
+      }
 
       if ($scope.list.display.realtime) $data.subscribe();
-
 
       if ($state.params.filters) {
         _.forOwn($state.params.filters, function(filter, name) {
@@ -237,6 +244,31 @@ angular.module('app.modules.common.controllers').controller('ListController', [
           delete $scope.editable[name];
         }
       });
+    };
+
+    $scope.deleteItem = function(item) {
+      var name = $data.models[$scope.meta.route].name;
+      $scope.editable[name] = angular.copy(item);
+      var tmpl = '/templates/common/delete-modal.html';
+      $pop.dialog($scope.meta.route, null, null,  tmpl, $scope);
+    };
+
+    $scope.finalizeDeleteItem = function() {
+      var name = $data.models[$scope.meta.route].name;
+      if ($scope.editable[name] && $scope.editable[name].id) {
+        $data.destroy($scope.meta.route, $scope.editable[name].id, function(err) {
+          if (err) {
+            $notification.error(err);
+          } else {
+            $pop.hideAll();
+            $notification.success(name + ' successfully removed.');
+            delete $scope.editable[name];
+          }
+        });
+      } else {
+        $pop.hideAll();
+        $notification.success('There was an error when attempting to delete this ' + name + '. Please try again.');
+      }
     };
 
     $scope.init();
