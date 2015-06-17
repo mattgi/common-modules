@@ -103,7 +103,7 @@ dwsync.xml
 # ------------------------------------------------------------------------------
 dist
 app/js/modules/common/services/config.js
-app/bower/
+src/bower/
 app/css/*.css
 .bower-cache/
 .bower-registry/
