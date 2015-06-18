@@ -103,14 +103,17 @@ angular.module('app.modules.authentication', [
         } else if (auth && auth.role && auth.role.length > 0) {
 
           if ($account.initialized) {
-            if ($account.me.role !== auth.role) {
-              // redirect to forbidden (server handling)
-              event.preventDefault();
-              if ($state.get('forbidden')) {
-                $state.go('forbidden');
-              } else {
-                $utils.navigateToForbidden();
-              }
+            if ($account.me.role === 'admin' || $account.me.role === auth.role) {
+              // authorized, pass through.
+              return;
+            }
+
+            // redirect to forbidden (server handling)
+            event.preventDefault();
+            if ($state.get('forbidden')) {
+              $state.go('forbidden');
+            } else {
+              $utils.navigateToForbidden();
             }
           } else {
             $account.refresh(function () {
