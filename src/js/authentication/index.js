@@ -1,7 +1,4 @@
-angular.module('app.modules.authentication.services', []);
-angular.module('app.modules.authentication.controllers', []);
-angular.module('app.modules.authentication.directives', []);
-angular.module('app.modules.authentication', [
+var modules = [
   'ui.router',
   'satellizer',
   'app.services', // This currently relies on gulp task creating a config.js file
@@ -10,19 +7,36 @@ angular.module('app.modules.authentication', [
   'app.modules.authentication.services',
   'app.modules.authentication.controllers',
   'app.modules.authentication.directives'
-]).config([
+];
+
+if (helpers.isIonic()) {
+  modules.unshift('ionic');
+}
+
+angular.module('app.modules.authentication.services', []);
+angular.module('app.modules.authentication.controllers', []);
+angular.module('app.modules.authentication.directives', []);
+angular.module('app.modules.authentication', modules)
+
+.config([
   '$authProvider',
   '$configProvider',
   function($authProvider, $configProvider) {
     var $config = $configProvider.$get();
 
-    configSatellizer($authProvider, $config.satellizer);
+    if (helpers.isIonic()) {
+      configIonicSatellizer($authProvider, $config.satellizer);
+    } else {
+      configWebSatellizer($authProvider, $config.satellizer);
+    }
 
     $authProvider.loginUrl = $config.uri.auth.signin;
     $authProvider.signupUrl = $config.uri.auth.signup;
     $authProvider.tokenPrefix = 'auth';
   }
-]).run([
+])
+
+.run([
   '$rootScope',
   '$window',
   '$auth',
@@ -144,7 +158,36 @@ angular.module('app.modules.authentication', [
  * @param {object} $authProvider
  * @param {object} $providers
  */
-function configSatellizer($authProvider, $providers) {
+function configIonicSatellizer($authProvider, $providers) {
+  var commonConfig = {
+    popupOptions: {
+      location : 'no',
+      toolbar  : 'no',
+      width    : window.screen.width,
+      height   : window.screen.height
+    }
+  };
+
+  if (ionic.Platform.isIOS() || ionic.Platform.isAndroid()) {
+    $authProvider.platform   = 'mobile';
+    commonConfig.redirectUri = 'http://localhost/';
+  }
+
+  if ($providers) {
+    for (var provider in $providers) {
+      if ($authProvider.hasOwnProperty(provider) && 'function' === typeof($authProvider[provider])) {
+        $authProvider[provider](angular.extend({}, commonConfig, $providers[provider]));
+      }
+    }
+  }
+}
+
+/**
+ * Configure satillizer settings for available providers
+ * @param {object} $authProvider
+ * @param {object} $providers
+ */
+function configWebSatellizer($authProvider, $providers) {
   if ($providers) {
     for (var provider in $providers) {
       if ($authProvider.hasOwnProperty(provider) && 'function' === typeof($authProvider[provider])) {
