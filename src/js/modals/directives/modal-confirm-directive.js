@@ -1,4 +1,4 @@
-angular.module('app.modules.modal.directives')
+angular.module('app.modules.modals.directives')
   .directive('modalConfirm', [
     function() {
       return {
