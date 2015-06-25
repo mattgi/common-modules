@@ -1,4 +1,4 @@
-angular.module('app.admin.controllers').controller('StyleGuideController', [
+angular.module('app.modules.common.controllers').controller('StyleGuideController', [
   '$rootScope',
   '$scope',
   '$state',
